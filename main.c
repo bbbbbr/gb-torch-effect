@@ -15,7 +15,7 @@ UINT8 previous_keys;
 
 void init_gfx() {
     // Load tiles (background + window)
-    set_bkg_data(0, 78, dungeon_tiles);
+    set_bkg_data(0, 79, dungeon_tiles);
 
     // Load background map
     set_bkg_tiles(0, 0, 32, 32, dungeon_mapPLN0);
