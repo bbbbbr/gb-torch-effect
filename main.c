@@ -12,6 +12,7 @@ UINT8 previous_keys;
 #define KEY_RELEASED(K) ((previous_keys & (K)) && !(keys & (K)))
 #define ANY_KEY_PRESSED (keys)
 
+#define BKG_TILE_WHITE 1 // 2rd tile in set is solid white
 #define BKG_TILE_BLACK 2 // 3rd tile in set is solid black
 
 // Make assumptions about the state of LCDC reg to avoid having to OR/XOR the window bit
@@ -35,6 +36,9 @@ void hblank_isr() {
 //    if (LY_REG > 96)
 //        SHOW_WIN_FASTER;
 //    else 
+LCDC_REG = 0xE1;
+WX_REG = 7;
+
     if (LY_REG < 48)
     {
         HIDE_WIN_FASTER;
@@ -82,9 +86,9 @@ void init_gfx() {
     SHOW_BKG;
 
 //    // Set Window map to solid black, move it to upper left and show it
-//    fill_win_rect(0,0,31,31,BKG_TILE_BLACK);
-//    move_win(7,0);
-//    SHOW_WIN;
+    fill_win_rect(0,0,31,31,BKG_TILE_BLACK);
+    move_win(112,0);
+    SHOW_WIN;
 }
 
 void main(void)
