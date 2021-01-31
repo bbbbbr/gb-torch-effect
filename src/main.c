@@ -97,6 +97,16 @@ void init_gfx() {
     SHOW_WIN;
 }
 
+#define Y_SIZE  16U // +/- center, so 2x for full size
+#define Y_GROW  16u
+#define Y_START (UINT8)((144U / 2U) - Y_SIZE)
+#define Y_END   (UINT8)((144U / 2U) + Y_SIZE)
+
+#define X_SIZE  16U // +/- center, so 2x for full size
+#define X_GROW  16u
+#define X_START (UINT8)((160U / 2U) - X_SIZE)
+#define X_END   (UINT8)((160U / 2U) + X_SIZE)
+
 void main(void)
 {
 	init_gfx();
@@ -106,13 +116,13 @@ void main(void)
     while(1) {
 
 		if (sys_time & 0x01) {
-			LYC_REG	= 48U;
-			WX_REG = 112U;
-			y_line_end = 96U;
+			LYC_REG	   = Y_START;
+			WX_REG     = X_END;
+			y_line_end = Y_END;
 		} else {
-			LYC_REG	= (48U - 16U);
-			WX_REG = (112U + 16U);
-			y_line_end = (96U + 16U);
+			LYC_REG	   = (Y_START - Y_GROW);   // Top
+			WX_REG     = (X_END + X_GROW);      // Right
+			y_line_end = (Y_END + Y_GROW);  // Bottom
 		}
         UPDATE_KEYS(); // Read Joypad
 
