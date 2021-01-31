@@ -6,9 +6,10 @@ LCC = $(GBDK_HOME)bin/lcc -Wa-l -Wl-m -Wl-j
 # CFLAGS	= -DGBDK_2_COMPAT
 
 OBJDIR      = obj
+SRCDIR      = src
 BINS	    = torch.gb
-CSOURCES   := $(wildcard *.c) $(wildcard res/*.c)
-ASMSOURCES := $(wildcard *.s)
+CSOURCES   := $(wildcard $(SRCDIR)/*.c) $(wildcard res/*.c)
+ASMSOURCES := $(wildcard $(SRCDIR)/*.s)
 # OBJS       = $(CSOURCES:%.c=%.o) $(ASMSOURCES:%.s=%.o)
 OBJS       = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
 

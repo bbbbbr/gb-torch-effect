@@ -1,6 +1,6 @@
 #include <gb/gb.h>
-#include "res/dungeon_map.h"
-#include "res/dungeon_tiles.h"
+#include "../res/dungeon_map.h"
+#include "../res/dungeon_tiles.h"
 
 
 UINT8 keys;
