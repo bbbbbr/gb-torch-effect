@@ -25,6 +25,8 @@
 .custom_int_LCD:
 	PUSH	AF
 	PUSH	BC
+	PUSH	HL
+; TODO: wait for one full line here for an even start (could just jp to end)
 
 lcd_line_handle$:							
 
@@ -67,9 +69,15 @@ wait_mode_10$:
 
 ; == Test for Exit based on LY
 
+;	ldh	a, (_LY_REG+0)
+;	sub	a, #96
+;	jp  nc, lcd_isr_exit$		; Exit after ending line reached
+
 	ldh	a, (_LY_REG+0)
-	sub	a, #96
-	jp  nc, lcd_isr_exit$		; Exit after ending line reached
+	ld	hl, #_y_line_end
+	sub	a, (hl)
+	jp 	Z, lcd_isr_exit$			; Exit after ending line reached
+
 	
 	jp lcd_line_handle$			; No exit, stay in ISR another line
 
@@ -79,6 +87,7 @@ lcd_isr_exit$:
 	LD		A, #0xE0
 	LDH		(_LCDC_REG+0),a ; Turn BG & Window = OFF
 
+	POP		HL
 	POP		BC
 	POP		AF
 	RETI

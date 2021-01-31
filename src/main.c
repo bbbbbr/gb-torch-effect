@@ -6,6 +6,8 @@
 UINT8 keys;
 UINT8 previous_keys;
 
+UINT8 y_line_end;
+
 #define UPDATE_KEYS() previous_keys = keys; keys = joypad()
 #define KEY_PRESSED(K) (keys & (K))
 #define KEY_TICKED(K)   ((keys & (K)) && !(previous_keys & (K)))
@@ -39,7 +41,8 @@ void hblank_isr() {
 LCDC_REG = 0xE1;
 WX_REG = 7;
 
-    if (LY_REG < 48)
+//    if (LY_REG < 48)
+	if (LY_REG == y_line_end)
     {
         HIDE_WIN_FASTER;
         __asm__("nop");
@@ -89,7 +92,7 @@ void init_gfx() {
     SHOW_BKG;
 
 //    // Set Window map to solid black, move it to upper left and show it
-    fill_win_rect(0,0,31,31,BKG_TILE_BLACK);
+    fill_win_rect(0,0,31,31,BKG_TILE_WHITE);
     move_win(112,0);
     SHOW_WIN;
 }
@@ -102,6 +105,15 @@ void main(void)
     // Loop endlessly
     while(1) {
 
+		if (sys_time & 0x01) {
+			LYC_REG	= 48U;
+			WX_REG = 112U;
+			y_line_end = 96U;
+		} else {
+			LYC_REG	= (48U - 16U);
+			WX_REG = (112U + 16U);
+			y_line_end = (96U + 16U);
+		}
         UPDATE_KEYS(); // Read Joypad
 
         if      (keys & J_LEFT) scroll_bkg(-1,0);
