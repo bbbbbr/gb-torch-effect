@@ -70,7 +70,10 @@ WX_REG = 7;
 void init_isr() {
     // Add the hblank ISR and enable it
     disable_interrupts();
-    STAT_REG = 0x18; 
+	LYC_REG = 48;  // Start ISR at line 48
+	STAT_REG = 0x40;   // LYC ISR = ON
+//    STAT_REG = 0x18; // HBlank ISR = ON
+	// Use the ISR from a seaprate ASM file instead
 //    add_LCD(hblank_isr);
 //    add_LCD(nowait_int_handler); // Override default ISR exit behavior, don't wait for mode
     set_interrupts(VBL_IFLAG | LCD_IFLAG);

@@ -15,175 +15,65 @@
 
 	.area	_BASE
 
+
+
+; Must make the update in mode 2?
+;  if mode 3 hits before its updated then it doesn't take effect until...
+;
+;
+
 .custom_int_LCD:
 	PUSH	AF
-;	PUSH	BC
+	PUSH	BC
 
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
+lcd_line_handle$:							
 
+wait_mode_23$:
+    ldh	a, (_STAT_REG+0)
+	bit	1, a
+	jr	z, wait_mode_23$		; Wait until mode 2/3   <-- optimize this (wait till mode 2 at least)
+	bit	0, a
+	jr	z, wait_mode_23$		; Wait until mode 2/3    <-- wait till mode 3 at least
 
+	LD		A, #0xE0
+	LDH		(_LCDC_REG+0),a ; BG & Window = ON
 
-;	ld  a, #167
-;	ldh	(_WX_REG+0),a  ; Move window off-screen to turn off
-
-;	ld	a, #0x07
-;	ld  a, #53
-;	ld  a, (_LY_REG+0)
-;	ldh	(_WX_REG+0),a  ; Move window to middle of screen
-
-;	ld	a, #0xc1
-;	ldh	(_LCDC_REG+0),a  ; Turn off window
+wait_mode_10$:
+    ldh	a, (_STAT_REG+0)
+	bit	1, a
+	jr	nz, wait_mode_10$		; Wait until mode 01
 
 
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-
-
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
+wait_mode_23_b$:
+    ldh	a, (_STAT_REG+0)
+	bit	1, a
+	jr	z, wait_mode_23_b$		; Wait until mode 2/3
 
 
 	LD		A, #0xE1
-	LDH		(_LCDC_REG+0),a  ; Turn BG/Window on
+	LDH		(_LCDC_REG+0),a ; Turn BG & Window = ON
 
 
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
+wait_mode_10_b$:
+    ldh	a, (_STAT_REG+0)
+	bit	1, a
+	jr	nz, wait_mode_10_b$		; Wait until mode 01
 
 
 
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-
-	ld	a, #0xE0
-	LDH		(_LCDC_REG+0),a  ; Turn BG/Window Off
-
-;1$:
-;    ldh a, (_STAT_REG+0)
-;	bit  1,a
-;	jr nz, 1$
-;     and #0x03
-;	    jr nz, 1$
-
-;	ld	a, #0xE0
-;	RES		0, A
-;	LDH		(_LCDC_REG+0),a  ; Turn BG/Window Off
+	ldh	a, (_LY_REG+0)
+	sub	a, #96
+	jp  nc, lcd_isr_exit$		; Exit after ending line reached
+	
+	jp lcd_line_handle$
 
 
-;	ld	a, #0xE1
-;	ldh	(_LCDC_REG+0),a  ; Turn window back on
+lcd_isr_exit$:
 
-;	SET		5, A
-;	ldh	(_LCDC_REG+0),a  ; Turn window back on
+	LD		A, #0xE1
+	LDH		(_LCDC_REG+0),a ; Turn BG & Window = ON
 
-;	ld  a, #106
-;	ldh	(_WX_REG+0),a  ; Move window to right edge of screen
-
-
-;1$:
-;    ldh a, (_STAT_REG+0)
-;	bit  1,a
-;	jr nz, 1$
-;     and #0x03
-;	    jr nz, 1$
-
-;	LD		A, #0xE1
-;	LDH		(_LCDC_REG+0),a  ; Turn BG/Window off
-
-;	POP		BC
+	POP		BC
 	POP		AF
 	RETI
 
