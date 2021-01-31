@@ -98,6 +98,6 @@
 #define sprite_tilesCGBPal7c2 6596
 #define sprite_tilesCGBPal7c3 5344
 /* Start of tile array. */
-extern unsigned char sprite_tiles[];
+extern const unsigned char sprite_tiles[];
 
 /* End of SPRITE_TILES.H */
