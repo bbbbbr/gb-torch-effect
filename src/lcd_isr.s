@@ -28,14 +28,35 @@
 
 lcd_line_handle$:							
 
+; ==== ~Start of a line
+
 wait_mode_23$:
     ldh	a, (_STAT_REG+0)
 	bit	1, a
 	jr	z, wait_mode_23$		; Wait until mode 2/3   <-- optimize this (wait till mode 2 at least)
-	bit	0, a
-	jr	z, wait_mode_23$		; Wait until mode 2/3    <-- wait till mode 3 at least
 
 	LD		A, #0xE0
+	LDH		(_LCDC_REG+0),a ; Turn BG & Window = OFF
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop		; Wait 3 x 5 cycles until 1/3 of the way through scanline
+
+	LD		A, #0xE1
 	LDH		(_LCDC_REG+0),a ; BG & Window = ON
 
 wait_mode_10$:
@@ -44,34 +65,19 @@ wait_mode_10$:
 	jr	nz, wait_mode_10$		; Wait until mode 01
 
 
-wait_mode_23_b$:
-    ldh	a, (_STAT_REG+0)
-	bit	1, a
-	jr	z, wait_mode_23_b$		; Wait until mode 2/3
-
-
-	LD		A, #0xE1
-	LDH		(_LCDC_REG+0),a ; Turn BG & Window = ON
-
-
-wait_mode_10_b$:
-    ldh	a, (_STAT_REG+0)
-	bit	1, a
-	jr	nz, wait_mode_10_b$		; Wait until mode 01
-
-
+; == Test for Exit based on LY
 
 	ldh	a, (_LY_REG+0)
 	sub	a, #96
 	jp  nc, lcd_isr_exit$		; Exit after ending line reached
 	
-	jp lcd_line_handle$
+	jp lcd_line_handle$			; No exit, stay in ISR another line
 
 
 lcd_isr_exit$:
 
-	LD		A, #0xE1
-	LDH		(_LCDC_REG+0),a ; Turn BG & Window = ON
+	LD		A, #0xE0
+	LDH		(_LCDC_REG+0),a ; Turn BG & Window = OFF
 
 	POP		BC
 	POP		AF
