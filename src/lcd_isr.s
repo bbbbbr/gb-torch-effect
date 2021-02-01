@@ -26,7 +26,9 @@
 	PUSH	AF
 	PUSH	BC
 	PUSH	HL
-; TODO: wait for one full line here for an even start (could just jp to end)
+
+; skip to end of isr to wait for one full line for an even start
+jp wait_mode_10$
 
 lcd_line_handle$:							
 
@@ -37,8 +39,8 @@ wait_mode_23$:
 	bit	1, a
 	jr	z, wait_mode_23$		; Wait until mode 2/3   <-- optimize this (wait till mode 2 at least)
 
-	LD		A, #0xE0
-	LDH		(_LCDC_REG+0),a ; Turn BG & Window = OFF
+	LD		A, #0xE9
+	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	nop
 	nop
@@ -59,7 +61,7 @@ wait_mode_23$:
 	nop		; Wait 3 x 5 cycles until 1/3 of the way through scanline
 
 	LD		A, #0xE1
-	LDH		(_LCDC_REG+0),a ; BG & Window = ON
+	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 
 wait_mode_10$:
     ldh	a, (_STAT_REG+0)
