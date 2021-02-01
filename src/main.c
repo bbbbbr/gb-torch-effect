@@ -120,7 +120,7 @@ void main(void)
 			WX_REG     = X_END;
 			y_line_end = Y_END;
 		} else {
-			LYC_REG	   = (Y_START - Y_GROW);   // Top
+			LYC_REG	   = (Y_START - Y_GROW);   // Top   // Can add one here to alter Y line timing
 			WX_REG     = (X_END + X_GROW);      // Right
 			y_line_end = (Y_END + Y_GROW);  // Bottom
 		}
