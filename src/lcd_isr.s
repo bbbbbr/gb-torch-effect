@@ -1,4 +1,3 @@
-
 ; From SameBoy
 ; Each line is 456 cycles. Without scrolling, sprites or a window:
 ; Mode 2 - 80  cycles / OAM Transfer
@@ -23,23 +22,55 @@
 ;
 
 .custom_int_LCD:
-	PUSH	AF
-	PUSH	BC
-	PUSH	HL
+	PUSH	AF  ; 2
+	PUSH	BC  ; 2
+	PUSH	HL  ; 2
 
-; skip to end of isr to wait for one full line for an even start
-jp wait_mode_10$
-
-lcd_line_handle$:							
-
-; ==== ~Start of a line
-
-wait_mode_23$:
-    ldh	a, (_STAT_REG+0)
+wait_mode_10$:
+    ldh	a, (_STAT_REG+0)  ; 3
 	bit	1, a
-	jr	z, wait_mode_23$		; Wait until mode 2/3   <-- optimize this (wait till mode 2 at least)
+;	and a, #0x03
+	jr	nz, wait_mode_10$		; On first pass -> Wait until mode 01
 
-lcd_line_handle_test$:
+
+lcd_loop_start$:
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
+    nop
+    nop
+    nop
+    nop
+    nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
 
 	LD		A, #0xE9
 	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
@@ -48,18 +79,49 @@ lcd_line_handle_test$:
 	nop
 	nop
 	nop
-	nop		; Wait 3 x 5 cycles until 1/3 of the way through scanline
+
+
 
 	nop
 	nop
 	nop
 	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
 
 	LD		A, #0xE1
 	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 
-
-
 	nop
 	nop
 	nop
@@ -78,71 +140,6 @@ lcd_line_handle_test$:
 	nop
 	nop
 
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
 
 	nop
 	nop
@@ -157,40 +154,19 @@ lcd_line_handle_test$:
 	nop
 
 ; == Test for Exit based on LY
-
 	ldh	a, (_LY_REG+0)
 	ld	hl, #_y_line_end
 	sub	a, (hl)
 	jp 	Z, lcd_isr_exit$			; Exit after ending line reached
 
-	jp lcd_line_handle_test$			; No exit, stay in ISR another line
+	jp lcd_loop_start$			; No exit, stay in ISR another line
 
-
-
-wait_mode_10$:
-    ldh	a, (_STAT_REG+0)
-	bit	1, a
-	jr	nz, wait_mode_10$		; Wait until mode 01
-
-
-
-;	ldh	a, (_LY_REG+0)
-;	sub	a, #96
-;	jp  nc, lcd_isr_exit$		; Exit after ending line reached
-
-	ldh	a, (_LY_REG+0)
-	ld	hl, #_y_line_end
-	sub	a, (hl)
-	jp 	Z, lcd_isr_exit$			; Exit after ending line reached
-
-	
-	jp lcd_line_handle$			; No exit, stay in ISR another line
 
 
 lcd_isr_exit$:
 
-	LD		A, #0xE0
-	LDH		(_LCDC_REG+0),a ; Turn BG & Window = OFF
+	LD		A, #0xE9
+	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	POP		HL
 	POP		BC
