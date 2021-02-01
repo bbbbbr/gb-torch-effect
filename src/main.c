@@ -92,7 +92,7 @@ void init_gfx() {
     SHOW_BKG;
 
 //    // Set Window map to solid black, move it to upper left and show it
-    fill_win_rect(0,0,31,31,BKG_TILE_WHITE);
+    fill_win_rect(0,0,32,32,BKG_TILE_WHITE);
     move_win(112,0);
     SHOW_WIN;
 }
