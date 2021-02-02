@@ -26,6 +26,34 @@
 	PUSH	BC  ; 2
 	PUSH	HL  ; 2
 
+; == SCX offset
+; * Even multiples of 8 = no correction
+; * Every + 1 after starts -1 more left
+;   Up to max of -7 left
+
+;	ldh a, (_SCX_REG+0)
+;	and a, #0x07
+;	ld  hl, #jump_offset$
+;wait_scx_offset$:
+;	add a, (hl)
+;	jp 	(hl)
+
+;	nop
+;	nop
+;	nop
+;	nop
+;
+;	nop
+;	nop
+;	nop
+;	nop
+;jump_offset$:
+
+wait_mode_23$:
+    ldh	a, (_STAT_REG+0)
+	bit	1, a
+	jr	z, wait_mode_23$		; Wait until mode 2/3   <-- optimize this (wait till mode 2 at least)
+
 wait_mode_10$:
     ldh	a, (_STAT_REG+0)  ; 3
 	bit	1, a
@@ -79,8 +107,6 @@ lcd_loop_start$:
 	nop
 	nop
 	nop
-
-
 
 	nop
 	nop
