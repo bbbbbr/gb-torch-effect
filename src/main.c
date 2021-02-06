@@ -21,6 +21,9 @@ UINT8 y_line_end;
 #define SPR_PLY_LEFT  0
 #define SPR_PLY_RIGHT 1
 
+#define SPR_PLY_X (((160U / 2U) - 8U) + 8U)  // Centered. X position for sprites is -8 from set position
+#define SPR_PLY_Y (((144U / 2U) - 8U) + 16U) // Centered. Y Position for sprites is -16 from set position
+
 #define PLY_DIR_LEFT   0U
 #define PLY_DIR_UP     2U
 #define PLY_DIR_RIGHT  4U
@@ -119,8 +122,8 @@ void init_gfx() {
     set_sprite_data(0, 8*4, sprite_tiles);
     update_player_sprite(PLY_DIR_LEFT);
     // Center player on screen
-    move_sprite(SPR_PLY_LEFT, (160 / 2) - 8, (144 / 2) - 8);
-    move_sprite(SPR_PLY_RIGHT, (160 / 2)    , (144 / 2) - 8);
+    move_sprite(SPR_PLY_LEFT,  SPR_PLY_X,     SPR_PLY_Y);
+    move_sprite(SPR_PLY_RIGHT, SPR_PLY_X + 8, SPR_PLY_Y);
     // 3= 3(black),2= 1 (l.gray), 1= 0 (white),  0= 2 (d.gray) TRANSP w/ PRIOR
     // Rearrange palette to (d.grey=transp, white, l.grey, black)
     OBP0_REG = (0x03U << 6) | (0x01U << 4) | (0x00U << 2) | (0x02U);
@@ -130,6 +133,7 @@ void init_gfx() {
     SHOW_WIN;
     SHOW_SPRITES;
 }
+
 
 #define Y_SIZE  16U // +/- center, so 2x for full size
 #define Y_GROW  16u
