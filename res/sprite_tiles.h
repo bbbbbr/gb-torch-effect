@@ -27,10 +27,10 @@
 #define sprite_tilesBank 0
 
 /* Super Gameboy palette 0 */
-#define sprite_tilesSGBPal0c0 32548
+#define sprite_tilesSGBPal0c0 0
 #define sprite_tilesSGBPal0c1 0
-#define sprite_tilesSGBPal0c2 29696
-#define sprite_tilesSGBPal0c3 13043
+#define sprite_tilesSGBPal0c2 10240
+#define sprite_tilesSGBPal0c3 979
 
 /* Super Gameboy palette 1 */
 #define sprite_tilesSGBPal1c0 6076
@@ -51,10 +51,10 @@
 #define sprite_tilesSGBPal3c3 5344
 
 /* Gameboy Color palette 0 */
-#define sprite_tilesCGBPal0c0 6179
-#define sprite_tilesCGBPal0c1 18671
-#define sprite_tilesCGBPal0c2 22106
-#define sprite_tilesCGBPal0c3 28575
+#define sprite_tilesCGBPal0c0 10661
+#define sprite_tilesCGBPal0c1 26588
+#define sprite_tilesCGBPal0c2 14096
+#define sprite_tilesCGBPal0c3 2112
 
 /* Gameboy Color palette 1 */
 #define sprite_tilesCGBPal1c0 6076
@@ -98,6 +98,6 @@
 #define sprite_tilesCGBPal7c2 6596
 #define sprite_tilesCGBPal7c3 5344
 /* Start of tile array. */
-extern const unsigned char sprite_tiles[];
+extern unsigned char sprite_tiles[];
 
 /* End of SPRITE_TILES.H */

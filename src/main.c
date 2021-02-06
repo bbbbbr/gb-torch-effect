@@ -1,6 +1,7 @@
 #include <gb/gb.h>
 #include "../res/dungeon_map.h"
 #include "../res/dungeon_tiles.h"
+#include "../res/sprite_tiles.h"
 
 
 UINT8 keys;
@@ -16,6 +17,16 @@ UINT8 y_line_end;
 
 #define BKG_TILE_WHITE 1 // 2rd tile in set is solid white
 #define BKG_TILE_BLACK 2 // 3rd tile in set is solid black
+
+#define SPR_PLY_LEFT  0
+#define SPR_PLY_RIGHT 1
+
+#define PLY_DIR_LEFT   0U
+#define PLY_DIR_UP     2U
+#define PLY_DIR_RIGHT  4U
+#define PLY_DIR_DOWN   6U
+#define PLY_DIR_RESET  0xFF
+
 
 // Make assumptions about the state of LCDC reg to avoid having to OR/XOR the window bit
 //#define SHOW_WIN_FASTER LCDC_REG = 0xE1
@@ -83,18 +94,41 @@ void init_isr() {
     enable_interrupts();
 }
 
+
+void update_player_sprite(UINT8 dir) {
+    static UINT8 tile_id = PLY_DIR_RESET;
+
+    tile_id = dir * 4U;
+
+    set_sprite_tile(SPR_PLY_LEFT, tile_id + ((sys_time >> 1) & 0x04));
+    set_sprite_tile(SPR_PLY_RIGHT, tile_id + 2U + ((sys_time >> 1) & 0x04));
+}
+
+
 void init_gfx() {
-    // Load tiles (background + window)
+    // Load tiles (background + window) and map
     set_bkg_data(0, 79, dungeon_tiles);
-
-    // Load background map
     set_bkg_tiles(0, 0, 32, 32, dungeon_mapPLN0);
-    SHOW_BKG;
 
-//    // Set Window map to solid black, move it to upper left and show it
+    // Set Window map to single solid color, move it to upper left and show it
     fill_win_rect(0,0,32,32,BKG_TILE_WHITE);
     move_win(112,0);
+
+    // Load sprite tiles
+    SPRITES_8x16;
+    set_sprite_data(0, 8*4, sprite_tiles);
+    update_player_sprite(PLY_DIR_LEFT);
+    // Center player on screen
+    move_sprite(SPR_PLY_LEFT, (160 / 2) - 8, (144 / 2) - 8);
+    move_sprite(SPR_PLY_RIGHT, (160 / 2)    , (144 / 2) - 8);
+    // 3= 3(black),2= 1 (l.gray), 1= 0 (white),  0= 2 (d.gray) TRANSP w/ PRIOR
+    // Rearrange palette to (d.grey=transp, white, l.grey, black)
+    OBP0_REG = (0x03U << 6) | (0x01U << 4) | (0x00U << 2) | (0x02U);
+
+
+    SHOW_BKG;
     SHOW_WIN;
+    SHOW_SPRITES;
 }
 
 #define Y_SIZE  16U // +/- center, so 2x for full size
@@ -110,7 +144,7 @@ void init_gfx() {
 void main(void)
 {
 	init_gfx();
-    init_isr();
+//    init_isr();
 
     // Loop endlessly
     while(1) {
@@ -126,11 +160,22 @@ void main(void)
 		}
         UPDATE_KEYS(); // Read Joypad
 
-        if      (keys & J_LEFT) scroll_bkg(-1,0);
-        else if (keys & J_RIGHT) scroll_bkg(1,0);
-
-        if      (keys & J_UP)   scroll_bkg(0,-1);
-        else if (keys & J_DOWN) scroll_bkg(0,1);
+        if (keys & J_LEFT) {
+            scroll_bkg(-1,0);
+            update_player_sprite(PLY_DIR_LEFT);
+        }
+        else if (keys & J_RIGHT) {
+            scroll_bkg(1,0);
+            update_player_sprite(PLY_DIR_RIGHT);
+        }
+        else if (keys & J_UP) {
+            scroll_bkg(0,-1);
+            update_player_sprite(PLY_DIR_UP);
+        }
+        else if (keys & J_DOWN) {
+            scroll_bkg(0,1);
+            update_player_sprite(PLY_DIR_DOWN);
+        }
  
         wait_vbl_done(); // Yield CPU till the end of each frame
     }
