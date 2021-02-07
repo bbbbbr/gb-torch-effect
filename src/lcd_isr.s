@@ -100,7 +100,7 @@ lcd_loop_start$:
 	nop
 	nop
 
-	LD		A, #0xE9
+	LD		A, #0xEF
 	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	nop
@@ -108,11 +108,10 @@ lcd_loop_start$:
 	nop
 	nop
 
-	nop
-	nop
-	nop
-	nop
-	nop
+	; shape window into semi circle (draw a circle get points, load different sizes
+	;ld		a, b
+	;inc	a
+	;ldh	(_WX_REG+0), a
 
 	nop
 	nop
@@ -144,8 +143,14 @@ lcd_loop_start$:
 	nop
 	nop
 
+	nop
+	nop
+	nop
+	nop
+	nop
 
-	LD		A, #0xE1
+
+	LD		A, #0xE7
 	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 
 	nop
@@ -191,7 +196,7 @@ lcd_loop_start$:
 
 lcd_isr_exit$:
 
-	LD		A, #0xE9
+	LD		A, #0xEF
 	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	POP		HL

@@ -4,10 +4,10 @@
 #include "../res/sprite_tiles.h"
 
 
-UINT8 keys;
-UINT8 previous_keys;
+UINT8 keys = 0;
+UINT8 previous_keys = 0;
 
-UINT8 y_line_end;
+UINT8 y_line_end = 0;
 
 #define UPDATE_KEYS() previous_keys = keys; keys = joypad()
 #define KEY_PRESSED(K) (keys & (K))
@@ -114,12 +114,12 @@ void init_gfx() {
     set_bkg_tiles(0, 0, 32, 32, dungeon_mapPLN0);
 
     // Set Window map to single solid color, move it to upper left and show it
-    fill_win_rect(0,0,32,32,BKG_TILE_WHITE);
+    fill_win_rect(0, 0, 32, 32,BKG_TILE_WHITE);
     move_win(112,0);
 
     // Load sprite tiles
     SPRITES_8x16;
-    set_sprite_data(0, 8*4, sprite_tiles);
+    set_sprite_data(0, 8 * 4, sprite_tiles); // 8 (16x16) sprite frames x 4 tiles each
     update_player_sprite(PLY_DIR_LEFT);
     // Center player on screen
     move_sprite(SPR_PLY_LEFT,  SPR_PLY_X,     SPR_PLY_Y);
@@ -148,11 +148,12 @@ void init_gfx() {
 void main(void)
 {
 	init_gfx();
-//    init_isr();
+    init_isr();
 
     // Loop endlessly
     while(1) {
 
+        // Alternate windowed size
 		if (sys_time & 0x01) {
 			LYC_REG	   = Y_START;
 			WX_REG     = X_END;
