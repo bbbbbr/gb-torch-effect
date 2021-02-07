@@ -98,6 +98,6 @@
 #define dungeon_tilesCGBPal7c2 6596
 #define dungeon_tilesCGBPal7c3 5344
 /* Start of tile array. */
-extern const unsigned char dungeon_tiles[];
+extern const const unsigned char dungeon_tiles[];
 
 /* End of DUNGEON_TILES.H */
