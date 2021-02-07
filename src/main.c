@@ -133,7 +133,7 @@ void init_gfx() {
     set_bkg_tiles(0, 0, 32, 32, dungeon_mapPLN0);
 
     // Set Window map to single solid color, move it to upper left and show it
-    fill_win_rect(0, 0, 32, 32,BKG_TILE_WHITE);
+    fill_win_rect(0, 0, 32, 32,BKG_TILE_BLACK);
     move_win(112,0);
 
     // Load sprite tiles
