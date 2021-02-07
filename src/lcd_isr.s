@@ -49,6 +49,20 @@
 ;	nop
 ;jump_offset$:
 
+
+; ----------------- Prep for WX Right-side Rounded Window Update
+; WX_REG = *p_x_end;
+;	ld	hl, #_p_x_end
+	ld	hl, #_p_x_end+0
+	ld	c, (hl)
+	dec c 				; Fix for array address off by +1.. why?	
+	inc hl
+	ld	b, (hl)
+	ld	a, (bc)
+;	ldh	(_WX_REG+0),a   ; This is performed below each scanline + dec c
+
+
+
 wait_mode_23$:
     ldh	a, (_STAT_REG+0)
 	bit	1, a
@@ -63,6 +77,13 @@ wait_mode_10$:
 
 lcd_loop_start$:
 
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
 	nop
 	nop
 	nop
@@ -100,39 +121,33 @@ lcd_loop_start$:
 	nop
 	nop
 
-	LD		A, #0xEF
-	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
+	ld		a, #0xEF
+	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
-	nop
-	nop
-	nop
-	nop
+; ----------------- WX Right-side Rounded Window Update
+						; Update WX each scanline from the circle LUT
+						; BC is pre-loaded with the first LUT address on entering the ISR
+						; 44 cycles total
+	; WX_REG = *p_x_end;
+;	ld	hl, #_p_x_end
+;	ld	c, (hl)
+;	inc hl
+;	ld	b, (hl)        
+	ld	a, (bc)  		; Load WX for current scanline from LUT
+	ldh	(_WX_REG+0), a
+	; p_x_end++;
+	inc	c        		; Move pointer to next LUT entry (LUT is 128 byte aligned, don't need a 16 bit add
 
-	; shape window into semi circle (draw a circle get points, load different sizes
-	;ld		a, b
-	;inc	a
-	;ldh	(_WX_REG+0), a
+	; Cycles removed for above code
+;	nop
+;	nop
+;	nop
+;	nop
+;	nop
 
-	nop
-	nop
-	nop
-	nop
-	nop
+;	nop
+; -----------------
 
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
 	nop
 	nop
 	nop
@@ -149,9 +164,21 @@ lcd_loop_start$:
 	nop
 	nop
 
+	nop
+	nop
+	nop
+	nop
+	nop
 
-	LD		A, #0xE7
-	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
+	ld		a, #0xE7
+	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 
 	nop
 	nop

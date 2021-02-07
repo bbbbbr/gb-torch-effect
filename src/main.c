@@ -4,6 +4,25 @@
 #include "../res/sprite_tiles.h"
 
 
+ // Relies on altered CODE location: -Wl-b_CODE=0x0300
+// 128 bit aligned
+const UINT8 __at(0x200) X_END_LUT_SM[33] = {
+ 0x57u, 0x5Cu, 0x5Eu, 0x60u, 0x61u, 0x62u, 0x63u, 0x64u, 0x64u, 0x65u, 0x65u, 
+ 0x66u, 0x66u, 0x66u, 0x66u, 0x66u, 0x67u, 0x66u, 0x66u, 0x66u, 0x66u, 0x66u, 
+ 0x65u, 0x65u, 0x64u, 0x64u, 0x63u, 0x62u, 0x61u, 0x60u, 0x5Eu, 0x5Cu, 0x57u
+ };
+
+// 128 bit aligned
+const UINT8 __at(0x280) X_END_LUT_LG[65] = {
+ 0x57u, 0x5Eu, 0x62u, 0x64u, 0x66u, 0x68u, 0x69u, 0x6Au, 0x6Cu, 0x6Du, 0x6Eu, 
+ 0x6Fu, 0x6Fu, 0x70u, 0x71u, 0x72u, 0x72u, 0x73u, 0x73u, 0x74u, 0x74u, 0x75u, 
+ 0x75u, 0x75u, 0x75u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x77u, 
+ 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x75u, 0x75u, 0x75u, 0x75u, 
+ 0x74u, 0x74u, 0x73u, 0x73u, 0x72u, 0x72u, 0x71u, 0x70u, 0x6Fu, 0x6Fu, 0x6Eu,
+ 0x6Du, 0x6Cu, 0x6Au, 0x69u, 0x68u, 0x66u, 0x64u, 0x62u, 0x5Eu, 0x57u
+ };
+
+
 UINT8 keys = 0;
 UINT8 previous_keys = 0;
 
@@ -135,18 +154,23 @@ void init_gfx() {
 }
 
 
+
 #define Y_SIZE  16U // +/- center, so 2x for full size
 #define Y_GROW  16u
 #define Y_START (UINT8)((144U / 2U) - Y_SIZE)
-#define Y_END   (UINT8)((144U / 2U) + Y_SIZE)
+#define Y_END   (UINT8)((144U / 2U) + Y_SIZE) + 1 // +1 for proper centering
 
 #define X_SIZE  16U // +/- center, so 2x for full size
 #define X_GROW  16u
 #define X_START (UINT8)((160U / 2U) - X_SIZE)
-#define X_END   (UINT8)((160U / 2U) + X_SIZE)
+#define X_END   (UINT8)((160U / 2U) + X_SIZE) + 1 // +1 for proper centering
+
+UINT8 const * p_x_end;
 
 void main(void)
 {
+    p_x_end = &X_END_LUT_SM[0];
+
 	init_gfx();
     init_isr();
 
@@ -158,12 +182,17 @@ void main(void)
 			LYC_REG	   = Y_START;
 			WX_REG     = X_END;
 			y_line_end = Y_END;
+            p_x_end = &X_END_LUT_SM[0];
 		} else {
 			LYC_REG	   = (Y_START - Y_GROW);   // Top   // Can add one here to alternate Y line timing
 			WX_REG     = (X_END + X_GROW);     // Right
 			y_line_end = (Y_END + Y_GROW);     // Bottom
+            p_x_end = &X_END_LUT_LG[0];
 		}
         UPDATE_KEYS(); // Read Joypad
+
+// WX_REG = *p_x_end;
+ p_x_end++;
 
         if (keys & J_LEFT) {
             scroll_bkg(-1,0);
