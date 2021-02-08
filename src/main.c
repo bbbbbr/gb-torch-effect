@@ -50,68 +50,14 @@ UINT8 y_line_end = 0;
 #define PLY_DIR_RESET  0xFF
 
 
-// Make assumptions about the state of LCDC reg to avoid having to OR/XOR the window bit
-//#define SHOW_WIN_FASTER LCDC_REG = 0xE1
-//#define HIDE_WIN_FASTER LCDC_REG = 0xC1
-#define SHOW_WIN_FASTER LCDC_REG = 0xC0
-#define HIDE_WIN_FASTER LCDC_REG = 0xC1
-
 UINT8 hdelay = 2;
-
-void hblank_isr() {
-//    // Don't start until line [effect_y_line]
-//    if (LY_REG == 48)
-//        HIDE_WIN_FASTER;
-//    else if (LY_REG == 96)
-//        SHOW_WIN_FASTER;
-    // Applies after X and into top of new frame
-//    if (LY_REG == 48)
-//        HIDE_WIN_FASTER;
-
-//    if (LY_REG > 96)
-//        SHOW_WIN_FASTER;
-//    else 
-LCDC_REG = 0xE1;
-WX_REG = 7;
-
-//    if (LY_REG < 48)
-	if (LY_REG == y_line_end)
-    {
-        HIDE_WIN_FASTER;
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        SHOW_WIN_FASTER;        
-   }
-}
-
-// Set LYC = 48
-//   Add second handler
-//   set LYC = 96
-//     repeat loop 
-
-// TAC_REG = 0x01;
-
-// PUSHES 46
-// POPS   28
-
-// 80 Clocks from RST -> first instruction
-
-// 214 start typical
-// 136 ISR actual code
-// 92 end isr code
-// 8
 
 void init_isr() {
     // Add the hblank ISR and enable it
     disable_interrupts();
-	LYC_REG = 48;  // Start ISR at line 48
+	LYC_REG = 48;      // Start ISR at line 48
 	STAT_REG = 0x40;   // LYC ISR = ON
-//    STAT_REG = 0x18; // HBlank ISR = ON
-	// Use the ISR from a seaprate ASM file instead
-//    add_LCD(hblank_isr);
-//    add_LCD(nowait_int_handler); // Override default ISR exit behavior, don't wait for mode
+	// LCD ISR is in separate ASM file
     set_interrupts(VBL_IFLAG | LCD_IFLAG);
     enable_interrupts();
 }
@@ -121,7 +67,6 @@ void update_player_sprite(UINT8 dir) {
     static UINT8 tile_id = PLY_DIR_RESET;
 
     tile_id = dir * 4U;
-
     set_sprite_tile(SPR_PLY_LEFT, tile_id + ((sys_time >> 1) & 0x04));
     set_sprite_tile(SPR_PLY_RIGHT, tile_id + 2U + ((sys_time >> 1) & 0x04));
 }
@@ -131,7 +76,6 @@ void init_gfx() {
     // Load tiles (background + window) and map
     set_bkg_data(0, 79, dungeon_tiles);
     set_bkg_tiles(0, 0, 32, 32, dungeon_mapPLN0);
-
     // Set Window map to single solid color, move it to upper left and show it
     fill_win_rect(0, 0, 32, 32,BKG_TILE_BLACK);
     move_win(112,0);
@@ -146,7 +90,6 @@ void init_gfx() {
     // 3= 3(black),2= 1 (l.gray), 1= 0 (white),  0= 2 (d.gray) TRANSP w/ PRIOR
     // Rearrange palette to (d.grey=transp, white, l.grey, black)
     OBP0_REG = (0x03U << 6) | (0x01U << 4) | (0x00U << 2) | (0x02U);
-
 
     SHOW_BKG;
     SHOW_WIN;
@@ -190,9 +133,6 @@ void main(void)
             p_x_end = &X_END_LUT_LG[0];
 		}
         UPDATE_KEYS(); // Read Joypad
-
-// WX_REG = *p_x_end;
- p_x_end++;
 
         if (keys & J_LEFT) {
             scroll_bkg(-1,0);

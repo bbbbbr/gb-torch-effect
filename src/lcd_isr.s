@@ -55,7 +55,6 @@
 ;	ld	hl, #_p_x_end
 	ld	hl, #_p_x_end+0
 	ld	c, (hl)
-	dec c 				; Fix for array address off by +1.. why?	
 	inc hl
 	ld	b, (hl)
 	ld	a, (bc)
