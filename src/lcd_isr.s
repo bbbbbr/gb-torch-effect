@@ -77,6 +77,29 @@ wait_mode_10$:
 lcd_loop_start$:
 
 
+; ----------------- WX Right-side Rounded Window Update
+						; Update WX each scanline from the circle LUT
+						; BC is pre-loaded with the first LUT address on entering the ISR
+						; 44 cycles total
+	; WX_REG = *p_x_end;
+;	ld	hl, #_p_x_end
+;	ld	c, (hl)
+;	inc hl
+;	ld	b, (hl)        
+	ld	a, (bc)  		; Load WX for current scanline from LUT
+	ldh	(_WX_REG+0), a
+	; p_x_end++;
+	inc	c        		; Move pointer to next LUT entry (LUT is 128 byte aligned, don't need a 16 bit add
+
+	; Cycles removed for above code
+;	nop
+;	nop
+;	nop
+;	nop
+;	nop
+
+;	nop
+; -----------------
 	nop
 	nop
 	nop
@@ -123,29 +146,6 @@ lcd_loop_start$:
 	ld		a, #0xEF
 	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
-; ----------------- WX Right-side Rounded Window Update
-						; Update WX each scanline from the circle LUT
-						; BC is pre-loaded with the first LUT address on entering the ISR
-						; 44 cycles total
-	; WX_REG = *p_x_end;
-;	ld	hl, #_p_x_end
-;	ld	c, (hl)
-;	inc hl
-;	ld	b, (hl)        
-	ld	a, (bc)  		; Load WX for current scanline from LUT
-	ldh	(_WX_REG+0), a
-	; p_x_end++;
-	inc	c        		; Move pointer to next LUT entry (LUT is 128 byte aligned, don't need a 16 bit add
-
-	; Cycles removed for above code
-;	nop
-;	nop
-;	nop
-;	nop
-;	nop
-
-;	nop
-; -----------------
 
 	nop
 	nop
