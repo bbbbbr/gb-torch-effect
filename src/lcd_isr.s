@@ -60,6 +60,12 @@
 	ld	a, (bc)
 ;	ldh	(_WX_REG+0),a   ; This is performed below each scanline + dec c
 
+	; Load Window location for first line
+;	ld	a, (bc)  		; Load WX for current scanline from LUT
+	ldh	(_WX_REG+0), a
+	; p_x_end++;
+	inc	c        		; Move pointer to next LUT entry (LUT is 128 byte aligned, don't need a 16 bit add
+
 
 
 wait_mode_23$:
@@ -76,7 +82,122 @@ wait_mode_10$:
 
 lcd_loop_start$:
 
+	ld		a, #0x00
+	ldh		(_BGP_REG+0),a		; Set Background Pal to All black
 
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
+    nop
+    nop
+    nop
+    nop
+    nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+;	ld		a, #0xEF
+;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
+
+
+
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
+;	ld		a, #0xE7
+;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+	ld		a, #0xE4
+	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	nop
+	nop
+	nop
+	nop
+	nop
 ; ----------------- WX Right-side Rounded Window Update
 						; Update WX each scanline from the circle LUT
 						; BC is pre-loaded with the first LUT address on entering the ISR
@@ -100,115 +221,6 @@ lcd_loop_start$:
 
 ;	nop
 ; -----------------
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-
-    nop
-    nop
-    nop
-    nop
-    nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	ld		a, #0xEF
-	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
-
-
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-
-	ld		a, #0xE7
-	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	nop
-	nop
-	nop
-	nop
-	nop
 
 ; == Test for Exit based on LY
 	ldh	a, (_LY_REG+0)
@@ -222,12 +234,15 @@ lcd_loop_start$:
 
 lcd_isr_exit$:
 
-	LD		A, #0xEF
-	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
+	ld		a, #0xFF
+	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+;	LD		A, #0xEF
+;	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	POP		HL
 	POP		BC
 	POP		AF
 	RETI
+
 
 
