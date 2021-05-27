@@ -1,4 +1,4 @@
-export GBDK_HOME="/home/birch/git/gbdev/gbdk2020/gbdk-2020-git/build/gbdk/"
+export GBDK_HOME="../../gbdk2020/gbdk-2020-git/build/gbdk/"
 export BGB="../../tools/bgbw64-1.5.8/bgb64.exe"
 
 LCC = $(GBDK_HOME)bin/lcc -Wa-l -Wl-m -Wl-j -Wl-y -v -Wl-b_CODE=0x0300
