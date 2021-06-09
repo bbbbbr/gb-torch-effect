@@ -82,8 +82,11 @@ wait_mode_10$:
 
 lcd_loop_start$:
 
-	ld		a, #0x00
-	ldh		(_BGP_REG+0),a		; Set Background Pal to All black
+;;	ld		a, #0x00            ; White
+;	ld		a, #0xFF            ; Black
+;	ldh		(_BGP_REG+0),a		; Set Background Pal to new color at start of row
+	LD		A, #0xEF
+	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	nop
 	nop
@@ -150,11 +153,6 @@ lcd_loop_start$:
 	nop
 	nop
 
-	nop
-	nop
-	nop
-	nop
-	nop
 
 	nop
 	nop
@@ -163,10 +161,39 @@ lcd_loop_start$:
 	nop
 
 
-;	ld		a, #0xE7
-;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
-	ld		a, #0xE4
-	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+
+
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	ld		a, #0xE7
+	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+;;	ld		a, #0xE4
+;;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+
+
+;;	ld		a, #0xE7
+;;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+	; Too far to the left
+;	ld		a, #0xE4
+;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+
+	nop
+	nop
+
+;;	ld		a, #0xE7
+;;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+	; not quite far enough left
+;	ld		a, #0xE4
+;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+
+	nop
+	nop
+	nop
+
 
 	nop
 	nop
@@ -180,18 +207,13 @@ lcd_loop_start$:
 	nop
 	nop
 
-	nop
-	nop
-	nop
-	nop
-	nop
-
 
 	nop
 	nop
 	nop
 	nop
 	nop
+
 
 	nop
 	nop
@@ -234,10 +256,10 @@ lcd_loop_start$:
 
 lcd_isr_exit$:
 
-	ld		a, #0xFF
-	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
-;	LD		A, #0xEF
-;	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
+;	ld		a, #0xFF
+;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+	LD		A, #0xEF
+	LDH		(_LCDC_REG+0),a ; Swap BG Tile Map to Alt
 
 	POP		HL
 	POP		BC

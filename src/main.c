@@ -1,14 +1,27 @@
 #include <gb/gb.h>
+#include <stdint.h>
+#include <string.h>
+
 #include "../res/dungeon_map.h"
 #include "../res/dungeon_tiles.h"
+
 #include "../res/sprite_tiles.h"
 
+#include "../res/circle_small_tiles.h"
+#include "../res/circle_large_tiles.h"
+
+
+// ====================================================================
+
+// Window Circle Right Edge LUT
 
  // Relies on altered CODE location: -Wl-b_CODE=0x0300
 // 128 bit aligned
 const UINT8 __at(0x200) X_END_LUT_SM[33] = {
  0x57u, 0x5Cu, 0x5Eu, 0x60u, 0x61u, 0x62u, 0x63u, 0x64u, 0x64u, 0x65u, 0x65u, 
- 0x66u, 0x66u, 0x66u, 0x66u, 0x66u, 0x67u, 0x66u, 0x66u, 0x66u, 0x66u, 0x66u, 
+ 0x66u, 0x66u, 0x66u, 0x66u, 0x66u, 
+ 0x66u, // mid-point
+ 0x66u, 0x66u, 0x66u, 0x66u, 0x66u, 
  0x65u, 0x65u, 0x64u, 0x64u, 0x63u, 0x62u, 0x61u, 0x60u, 0x5Eu, 0x5Cu, 0x57u
  };
 
@@ -16,11 +29,101 @@ const UINT8 __at(0x200) X_END_LUT_SM[33] = {
 const UINT8 __at(0x280) X_END_LUT_LG[65] = {
  0x57u, 0x5Eu, 0x62u, 0x64u, 0x66u, 0x68u, 0x69u, 0x6Au, 0x6Cu, 0x6Du, 0x6Eu, 
  0x6Fu, 0x6Fu, 0x70u, 0x71u, 0x72u, 0x72u, 0x73u, 0x73u, 0x74u, 0x74u, 0x75u, 
- 0x75u, 0x75u, 0x75u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x77u, 
+ 0x75u, 0x75u, 0x75u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 
+ 0x76u, // mid-point
  0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x76u, 0x75u, 0x75u, 0x75u, 0x75u, 
  0x74u, 0x74u, 0x73u, 0x73u, 0x72u, 0x72u, 0x71u, 0x70u, 0x6Fu, 0x6Fu, 0x6Eu,
  0x6Du, 0x6Cu, 0x6Au, 0x69u, 0x68u, 0x66u, 0x64u, 0x62u, 0x5Eu, 0x57u
  };
+
+
+// ====================================================================
+
+// Sprite Circle Left edge
+
+ // 8 x 16 sprite mode
+#define SPR_TILE_COUNT_PLAYER   (8U * 4U) // 8 (16x16) sprite frames x 4 tiles each (2 frames per direction)
+#define SPR_TILE_COUNT_MASK_SM  (4U * 2U) // 3 x (8x16) sprite frames x 2 tiles each
+#define SPR_TILE_COUNT_MASK_LG  (6U * 2U) // 5 x (8x16) sprite frames x 2 tiles each
+#define SPR_TILE_START_MASK_SM  SPR_TILE_COUNT_PLAYER
+#define SPR_TILE_START_MASK_LG  (SPR_TILE_COUNT_PLAYER + SPR_TILE_COUNT_MASK_SM)
+
+#define FLIP_NO 0x00U
+#define FLIP_V  0x40U
+#define SPR_MASK_ST_X (5 * 8) // Starts 5 tiles from Left edge
+#define SPR_MASK_ST_Y ((3.5 * 16) + 1)// Starts 3.5 tiles from Top edge + a small fudge factor
+#define C_S(x,y,id,vflip) (y * 16U) + SPR_MASK_ST_Y, (x * 8U) + SPR_MASK_ST_X, (id * 2U) + SPR_TILE_START_MASK_SM, vflip
+#define C_L(x,y,id,vflip) (y * 16U) + SPR_MASK_ST_Y, (x * 8U) + SPR_MASK_ST_X, (id * 2U) + SPR_TILE_START_MASK_LG, vflip
+#define C_HIDE()          0,0,0,0
+
+
+// Block of sprites that do NOT change (large circle)
+const uint8_t spr_circle_lg_fixed[] = {
+    // Row 0
+    //  x   y   id  flip
+    C_L(0U, 0U, 0U, FLIP_NO),
+    C_L(1U, 0U, 1U, FLIP_NO),
+    C_L(2U, 0U, 2U, FLIP_NO),
+    C_L(3U, 0U, 3U, FLIP_NO),
+    C_L(4U, 0U, 4U, FLIP_NO),
+
+    // Row 1
+    C_L(0U, 1U, 0U, FLIP_NO),    
+
+    // Row 2
+    C_L(0U, 2U, 0U, FLIP_NO),    
+
+    // Row 3
+    //  x   y   id  flip
+    C_L(0U, 3U, 0U, FLIP_V),
+    C_L(1U, 3U, 1U, FLIP_V),
+    C_L(2U, 3U, 2U, FLIP_V),
+    C_L(3U, 3U, 3U, FLIP_V),
+    C_L(4U, 3U, 4U, FLIP_V)
+};
+
+
+// Center block of sprites that do change
+const uint8_t spr_circle_sm[] = {
+    // Row 1
+    //  x   y   id  flip
+    C_S(1U, 1U, 0U, FLIP_NO),
+    C_S(2U, 1U, 0U, FLIP_NO),
+    C_S(3U, 1U, 1U, FLIP_NO),
+    C_S(4U, 1U, 2U, FLIP_NO),
+    // Row 2
+    C_S(1U, 2U, 0U, FLIP_NO),
+    C_S(2U, 2U, 0U, FLIP_NO),
+    C_S(3U, 2U, 1U, FLIP_V),
+    C_S(4U, 2U, 2U, FLIP_V)
+};
+
+// Center block of sprites that do change
+const uint8_t spr_circle_lg[] = {
+    // Row 1
+    //  x   y   id  flip
+    C_L(1U, 1U, 5U, FLIP_NO),
+    C_HIDE(),
+    C_HIDE(),
+    C_HIDE(),
+    // Row 2
+    C_L(1U, 2U, 5U, FLIP_V),
+    C_HIDE(),
+    C_HIDE(),
+    C_HIDE()
+};
+
+#define SPR_COUNT_LG_FIXED (sizeof(spr_circle_lg_fixed))
+#define SPR_COUNT_LG       (sizeof(spr_circle_lg))
+#define SPR_COUNT_SM       (sizeof(spr_circle_sm))
+
+#define OAM_BYTES_PER_SPRITE  4U
+#define SPR_COUNT_FIXED_START 20U  // Arbirtary, start at 20 for now
+#define SPR_COUNT_CHANGE_START (SPR_COUNT_FIXED_START + (SPR_COUNT_LG_FIXED / OAM_BYTES_PER_SPRITE))
+
+
+// ====================================================================
+
 
 
 UINT8 keys = 0;
@@ -73,6 +176,10 @@ void update_player_sprite(UINT8 dir) {
 
 
 void init_gfx() {
+    uint8_t c;
+    uint8_t * p_shadow_oam;
+    uint8_t * p_spr_data;
+
     // Load tiles (background + window) and map
     set_bkg_data(0, 79, dungeon_tiles);
     set_bkg_tiles(0, 0, 32, 32, dungeon_mapPLN0);
@@ -80,9 +187,10 @@ void init_gfx() {
     fill_win_rect(0, 0, 32, 32,BKG_TILE_BLACK);
     move_win(112,0);
 
+
     // Load sprite tiles
     SPRITES_8x16;
-    set_sprite_data(0, 8 * 4, sprite_tiles); // 8 (16x16) sprite frames x 4 tiles each
+    set_sprite_data(0, SPR_TILE_COUNT_PLAYER, sprite_tiles); // 8 (16x16) sprite frames x 4 tiles each   
     update_player_sprite(PLY_DIR_LEFT);
     // Center player on screen
     move_sprite(SPR_PLY_LEFT,  SPR_PLY_X,     SPR_PLY_Y);
@@ -90,6 +198,15 @@ void init_gfx() {
     // 3= 3(black),2= 1 (l.gray), 1= 0 (white),  0= 2 (d.gray) TRANSP w/ PRIOR
     // Rearrange palette to (d.grey=transp, white, l.grey, black)
     OBP0_REG = (0x03U << 6) | (0x01U << 4) | (0x00U << 2) | (0x02U);
+
+    set_sprite_data(SPR_TILE_START_MASK_SM, SPR_TILE_COUNT_MASK_SM, circle_small_tiles);
+    set_sprite_data(SPR_TILE_START_MASK_LG, SPR_TILE_COUNT_MASK_LG, circle_large_tiles);
+
+
+    // Copy sprites that don't change    
+    memcpy( &(shadow_OAM[SPR_COUNT_FIXED_START]), // dest (offset into shadow OAM)
+            &(spr_circle_lg_fixed[0]),             // src (sprite data in OAM format)
+            sizeof(spr_circle_lg_fixed) );
 
     SHOW_BKG;
     SHOW_WIN;
@@ -101,12 +218,12 @@ void init_gfx() {
 #define Y_SIZE  16U // +/- center, so 2x for full size
 #define Y_GROW  16u
 #define Y_START (UINT8)((144U / 2U) - Y_SIZE)
-#define Y_END   (UINT8)((144U / 2U) + Y_SIZE) + 1 // +1 for proper centering
+#define Y_END   (UINT8)((144U / 2U) + Y_SIZE) // + 1 // +1 for proper centering <- not anymore
 
 #define X_SIZE  16U // +/- center, so 2x for full size
 #define X_GROW  16u
 #define X_START (UINT8)((160U / 2U) - X_SIZE)
-#define X_END   (UINT8)((160U / 2U) + X_SIZE) + 1 // +1 for proper centering
+#define X_END   (UINT8)((160U / 2U) + X_SIZE) // + 1 // +1 for proper centering <- not anymore
 
 UINT8 const * p_x_end;
 
@@ -122,15 +239,26 @@ void main(void)
 
         // Alternate windowed size
 		if (sys_time & 0x01) {
+            // SMALL circle window config            
 			LYC_REG	   = Y_START;
 			WX_REG     = X_END;
-			y_line_end = Y_END;
+			y_line_end = Y_END;            
             p_x_end = &X_END_LUT_SM[0];
+
+            // Set up *LARGE* circle to copy to OAM on next vblank
+            memcpy( &(shadow_OAM[SPR_COUNT_CHANGE_START]), // dest (offset into shadow OAM)
+                    &(spr_circle_lg[0]),                   // src (sprite data in OAM format)
+                    sizeof(spr_circle_lg) );
 		} else {
 			LYC_REG	   = (Y_START - Y_GROW);   // Top   // Can add one here to alternate Y line timing
 			WX_REG     = (X_END + X_GROW);     // Right
 			y_line_end = (Y_END + Y_GROW);     // Bottom
             p_x_end = &X_END_LUT_LG[0];
+
+            // Set up *SMALL* circle to copy to OAM on next vblank (via shadow oam)
+            memcpy( &(shadow_OAM[SPR_COUNT_CHANGE_START]), // dest (offset into shadow OAM)
+                    &(spr_circle_sm[0]),                   // src (sprite data in OAM format)
+                    sizeof(spr_circle_sm) );            
 		}
         UPDATE_KEYS(); // Read Joypad
 
