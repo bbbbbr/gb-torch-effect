@@ -1,11 +1,14 @@
 large
  
+* = changes between frames
+- = same between frames (even if an arc tile, background color change will hide)
+x = hide/no sprite
 
 +	0	1	2	3	4
     -----------------
 0	0	1	2	3	4
-1	0	5	-	-	-
-2	0	5v	-
+1	0	*5	*x	*x	*x
+2	0	*5v	*x	*x	*x
 3	0	1v	2v	3v	4v
 
 
@@ -15,8 +18,30 @@ Small circle is inset by 2 extra 8 pixel columns
 +	0	1	2	3	4
     -----------------
 0	-	-	-	-	-
-1	-	0	0	1	2
-2	-	0	0	1v	2v
+1	-	*0	*0	*1	*2
+2	-	*0	*0	*1v	*2v
 3	-	-	-	-	-
+
+
+V2 - 6 columns
+
+
++	0	1	2	3	4	5
+    ---------------------
+0	0	0	1	2	3	4
+1	0	0	*5	*x	*x	*x
+2	0	0	*5v	*x	*x	*x
+3	0	0	1v	2v	3v	4v
+
+
+Small circle is inset by 2 extra 8 pixel columns
+
+
++	0	1	2	3	4	5
+    ---------------------
+0	-	-	-	-	-	-
+1	-	-	*0	*0	*1	*2
+2	-	-	*0	*0	*1v	*2v
+3	-	-	-	-	-	-
 
 

@@ -169,20 +169,19 @@ lcd_loop_start$:
 	nop
 	nop
 
-	ld		a, #0xE7
-	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+;	; Sort of ok, sort of not
+;	ld		a, #0xE7
+;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 ;;	ld		a, #0xE4
 ;;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
 
 
-;;	ld		a, #0xE7
-;;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
-	; Too far to the left
-;	ld		a, #0xE4
-;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
+	nop
+	nop
 
-	nop
-	nop
+	; Sort of ok, sort of not
+	ld		a, #0xE7
+	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 
 ;;	ld		a, #0xE7
 ;;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
