@@ -26,6 +26,8 @@
 	PUSH	BC  ; 2
 	PUSH	HL  ; 2
 
+; TODO: just load from _y_line_end once and store for compare each loop iteration
+
 ; == SCX offset
 ; * Even multiples of 8 = no correction
 ; * Every + 1 after starts -1 more left
@@ -78,6 +80,7 @@ wait_mode_10$:
 	bit	1, a
 ;	and a, #0x03
 	jr	nz, wait_mode_10$		; On first pass -> Wait until mode 01
+								; Try to exit the loop on the mode 3 -> 0 transition
 
 
 lcd_loop_start$:
@@ -147,12 +150,6 @@ lcd_loop_start$:
 	nop
 	nop
 
-	nop
-	nop
-	nop
-	nop
-	nop
-
 
 	nop
 	nop
@@ -162,11 +159,22 @@ lcd_loop_start$:
 
 
 
+	nop
+	nop
+	nop
+	nop
+	nop
+
+
 
 	nop
 	nop
 	nop
 	nop
+
+	ld		a, #0xE7
+	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+
 	nop
 
 ;	; Sort of ok, sort of not
@@ -180,11 +188,9 @@ lcd_loop_start$:
 	nop
 
 	; Sort of ok, sort of not
-	ld		a, #0xE7
-	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
+;	ld		a, #0xE7
+;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 
-;;	ld		a, #0xE7
-;;	ldh		(_LCDC_REG+0),a ; Swap BG Tile Map to Main
 	; not quite far enough left
 ;	ld		a, #0xE4
 ;	ldh		(_BGP_REG+0),a		; Set Background Pal to Normal
@@ -219,37 +225,28 @@ lcd_loop_start$:
 	nop
 	nop
 	nop
-; ----------------- WX Right-side Rounded Window Update
-						; Update WX each scanline from the circle LUT
-						; BC is pre-loaded with the first LUT address on entering the ISR
-						; 44 cycles total
-	; WX_REG = *p_x_end;
-;	ld	hl, #_p_x_end
-;	ld	c, (hl)
-;	inc hl
-;	ld	b, (hl)        
-	ld	a, (bc)  		; Load WX for current scanline from LUT
-	ldh	(_WX_REG+0), a
-	; p_x_end++;
-	inc	c        		; Move pointer to next LUT entry (LUT is 128 byte aligned, don't need a 16 bit add
 
-	; Cycles removed for above code
-;	nop
-;	nop
-;	nop
-;	nop
-;	nop
-
-;	nop
-; -----------------
-
-; == Test for Exit based on LY
+							; == Test for Exit based on LY
 	ldh	a, (_LY_REG+0)
 	ld	hl, #_y_line_end
 	sub	a, (hl)
-	jp 	Z, lcd_isr_exit$			; Exit after ending line reached
+	jp 	Z, lcd_isr_exit$	; Exit after ending Y line reached
 
-	jp lcd_loop_start$			; No exit, stay in ISR another line
+
+							; == WX Right-side Rounded Window Update
+							;
+							; (After exit test so that WX update should be in hblank)
+							; Update WX each scanline from the circle LUT
+							; BC is pre-loaded with the first LUT address on entering the ISR
+							; 44 cycles total
+	ld	a, (bc)  			; Load WX for current scanline from LUT
+	ldh	(_WX_REG+0), a
+	inc	c        			; Move pointer to next LUT entry (LUT is 128 byte aligned, don't need a 16 bit add
+
+; -----------------
+
+
+	jp lcd_loop_start$			; Otherwise, stay in ISR for another line
 
 
 
