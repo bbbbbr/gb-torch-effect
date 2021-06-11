@@ -12,6 +12,8 @@
 
 // Window boxing and ISR config
 
+// TODO: credit notes: tileset from https://sondanielson.itch.io/gameboy-simple-rpg-tileset
+
 
 #define Y_SIZE  16u // +/- center, so 2x for full size
 #define Y_GROW  16u
@@ -248,36 +250,6 @@ void main(void)
     // Loop endlessly
     while(1) {
 
-// #define LARGE_ONLY
-// #define SMALL_ONLY
-#define ALTERNATE        
-
-#ifdef LARGE_ONLY
-            LYC_REG    = (Y_START - Y_GROW);   // Top   // Can add one here to alternate Y line timing
-            WX_REG     = (X_END + X_GROW);     // Right
-            y_line_end = (Y_END + Y_GROW);     // Bottom
-            p_x_end = &X_END_LUT_LG[0];
-
-            // Set up *LARGE* circle to copy to OAM on next vblank
-            memcpy( &(shadow_OAM[SPR_COUNT_CHANGE_START]), // dest (offset into shadow OAM)
-                    &(spr_circle_lg[0]),                   // src (sprite data in OAM format)
-                    sizeof(spr_circle_lg) );
-#endif
-
-#ifdef SMALL_ONLY
-
-            LYC_REG    = Y_START;
-            WX_REG     = X_END;
-            y_line_end = Y_END;            
-            p_x_end = &X_END_LUT_SM[0];
-
-            // Set up *SMALL* circle to copy to OAM on next vblank (via shadow oam)
-            memcpy( &(shadow_OAM[SPR_COUNT_CHANGE_START]), // dest (offset into shadow OAM)
-                    &(spr_circle_sm[0]),                   // src (sprite data in OAM format)
-                    sizeof(spr_circle_sm) );            
-#endif
-
-#ifdef ALTERNATE
         // Alternate windowed size
 		if (sys_time & 0x01) {
             // SMALL circle window config            
@@ -301,7 +273,6 @@ void main(void)
                     &(spr_circle_sm[0]),                   // src (sprite data in OAM format)
                     sizeof(spr_circle_sm) );            
 		}
-#endif
 
         UPDATE_KEYS(); // Read Joypad
 
