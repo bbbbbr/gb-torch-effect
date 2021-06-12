@@ -18,8 +18,6 @@
 #include "torch_win_data.h"
 #include "torch_sprite_data.h"
 
-// TODO: credit notes: tileset from https://sondanielson.itch.io/gameboy-simple-rpg-tileset
-
 // ====================================================================
 
 uint8_t y_line_end = 0;

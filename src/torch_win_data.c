@@ -9,9 +9,8 @@
 // Window Circle Right Edge MASK LUT
 // See xls file
 
-// Relies on altered CODE location: -Wl-b_CODE=0x0300
 // 128 bit aligned
-// TODO: FIXME, declare a const array big enough to move these around inside
+// Relies on altered CODE location (moving it from 0x0200): -Wl-b_CODE=0x0300
 
 const uint8_t __at(0x200) X_END_LUT_SM[] = {
  0x57u,
