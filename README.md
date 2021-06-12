@@ -3,7 +3,7 @@ Spotlight / Torch effect Demo for the Game Boy
 ==============================================
 
 
-This demo shows an effect of small background circles visible among a larger dark area, while still allowing the background map to scroll freely. Temporal blending of alternating frames creates the semi-transparent effect for the medium sized circle.
+This demo shows small circles of a background map visible among a larger dark area, while still allowing the background map to scroll freely. Temporal blending of alternating frames creates the semi-transparent effect for the medium sized circle.
 
 It looks like a simple, yet it's not a straightforward effect given the limited graphics abilities of the Game Boy. I learned a lot in the process of making this.
 
@@ -64,7 +64,7 @@ With the sprite masking turned off the offset is visible. The extra column of sp
 
 Here, to show the Window layer masking, the sprites are off *AND* the background set to a solid color instead of the dungeon map.
 
-The dark part is the Window layer. You see two different arc shapes since there is a different one for each alternating frame. The horizontal line at the top of the arcs is ~when the ISR starts for a given arc size.
+The dark part is the Window layer. Two different arc shapes are visible since there is a different one for each alternating frame. The horizontal line at the top of the arcs is ~when the ISR starts for a given arc size.
 
 ![Window Masking](/info/torch_effect_window_only.png)
 
