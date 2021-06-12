@@ -20,9 +20,6 @@
 	PUSH	AF  ; 2
 	PUSH	BC  ; 2
 	PUSH	HL  ; 2
-
-; TODO: just load from _y_line_end once and store for compare each loop iteration
-
 							; == Prep for WX Right-side Rounded Window Update
 							; Loads address at *p_x_end in BC
 	ld	hl, #_p_x_end+0
