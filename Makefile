@@ -40,3 +40,5 @@ clean:
 	rm -f  *.gb *.ihx *.cdb *.adb *.noi *.map
 	rm -f  $(OBJDIR)/*.* $(OBJDIR)/res/*.*
 
+usage:
+	 ../../tools/romusage/romusage torch.noi -a -g
