@@ -68,11 +68,11 @@ const UINT8 __at(0x280) X_END_LUT_LG[65] = {
 
 #define FLIP_NO 0x00U
 #define FLIP_V  0x40U
-#define SPR_MASK_ST_X (5 * 8) // Starts 5 tiles from Left edge
-#define SPR_MASK_ST_Y ((3.5 * 16) + 1)// Starts 3.5 tiles from Top edge + a small fudge factor
+#define SPR_MASK_ST_X     (6 * 8)   // Starts 5 tiles from Left edge
+#define SPR_MASK_ST_Y     ((3.5 * 16) + 1)// Starts 3.5 tiles from Top edge + a small fudge factor
 #define C_S(x,y,id,vflip) (y * 16u) + SPR_MASK_ST_Y, (x * 8u) + SPR_MASK_ST_X, (id * 2u) + SPR_TILE_START_MASK_SM, vflip
 #define C_L(x,y,id,vflip) (y * 16u) + SPR_MASK_ST_Y, (x * 8u) + SPR_MASK_ST_X, (id * 2u) + SPR_TILE_START_MASK_LG, vflip
-#define C_HIDE()          0,0,0,0
+#define C_HIDE()           0,0,0,0  // Sprite in non-visible position
 
 
 // Block of sprites that do NOT change (large circle)
@@ -80,28 +80,24 @@ const uint8_t spr_circle_lg_fixed[] = {
     // Row 0
     //  x   y   id  flip
     C_L(0U, 0U, 0U, FLIP_NO),
-    C_L(1U, 0U, 0U, FLIP_NO),
-    C_L(2U, 0U, 1U, FLIP_NO),
-    C_L(3U, 0U, 2U, FLIP_NO),
-    C_L(4U, 0U, 3U, FLIP_NO),
-    C_L(5U, 0U, 4U, FLIP_NO),
+    C_L(1U, 0U, 1U, FLIP_NO),
+    C_L(2U, 0U, 2U, FLIP_NO),
+    C_L(3U, 0U, 3U, FLIP_NO),
+    C_L(4U, 0U, 4U, FLIP_NO),
 
     // Row 1
     C_L(0U, 1U, 0U, FLIP_NO),
-    C_L(1U, 1U, 0U, FLIP_NO),
 
     // Row 2
     C_L(0U, 2U, 0U, FLIP_NO),
-    C_L(1U, 2U, 0U, FLIP_NO),
 
     // Row 3
     //  x   y   id  flip
     C_L(0U, 3U, 0U, FLIP_V),
-    C_L(1U, 3U, 0U, FLIP_V),
-    C_L(2U, 3U, 1U, FLIP_V),
-    C_L(3U, 3U, 2U, FLIP_V),
-    C_L(4U, 3U, 3U, FLIP_V),
-    C_L(5U, 3U, 4U, FLIP_V)
+    C_L(1U, 3U, 1U, FLIP_V),
+    C_L(2U, 3U, 2U, FLIP_V),
+    C_L(3U, 3U, 3U, FLIP_V),
+    C_L(4U, 3U, 4U, FLIP_V)
 };
 
 
@@ -109,27 +105,27 @@ const uint8_t spr_circle_lg_fixed[] = {
 const uint8_t spr_circle_sm[] = {
     // Row 1
     //  x   y   id  flip
+    C_S(1U, 1U, 0U, FLIP_NO),
     C_S(2U, 1U, 0U, FLIP_NO),
-    C_S(3U, 1U, 0U, FLIP_NO),
-    C_S(4U, 1U, 1U, FLIP_NO),
-    C_S(5U, 1U, 2U, FLIP_NO),
+    C_S(3U, 1U, 1U, FLIP_NO),
+    C_S(4U, 1U, 2U, FLIP_NO),
     // Row 2
+    C_S(1U, 2U, 0U, FLIP_NO),
     C_S(2U, 2U, 0U, FLIP_NO),
-    C_S(3U, 2U, 0U, FLIP_NO),
-    C_S(4U, 2U, 1U, FLIP_V),
-    C_S(5U, 2U, 2U, FLIP_V)
+    C_S(3U, 2U, 1U, FLIP_V),
+    C_S(4U, 2U, 2U, FLIP_V)
 };
 
 // Center block of sprites that do change
 const uint8_t spr_circle_lg[] = {
     // Row 1
     //  x   y   id  flip
-    C_L(2U, 1U, 5U, FLIP_NO),
+    C_L(1U, 1U, 5U, FLIP_NO),
     C_HIDE(),
     C_HIDE(),
     C_HIDE(),
     // Row 2
-    C_L(2U, 2U, 5U, FLIP_V),
+    C_L(1U, 2U, 5U, FLIP_V),
     C_HIDE(),
     C_HIDE(),
     C_HIDE()
