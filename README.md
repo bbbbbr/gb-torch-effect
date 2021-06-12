@@ -3,27 +3,27 @@ Spotlight / Torch effect Demo for the Game Boy
 ==============================================
 
 
-This demo creates an effect of darkened concentric circles around a centered sprite, while still allowing the background map to scroll freely. 
+This demo shows an effect of small background circles visible among a larger dark area, while still allowing the background map to scroll freely. Temporal blending of alternating frames creates the semi-transparent effect for the medium sized circle.
 
-It gives the appearance of a foreground layer with a transparent hole in addition to the background map. Alternating frame images are used to further create the impression of additional color shades (~7) above the usual 4 colors on a Game Boy.
+It looks like a simple, yet it's not a straightforward effect given the limited graphics abilities of the Game Boy. I learned a lot in the process of making this.
 
-![Game Boy video of torch effect demo](https://raw.githubusercontent.com/bbbbbr/gb-torch-effect/release/info/torch_effect_anim.gif)
+![Game Boy video of torch effect demo](/info/torch_effect_anim.gif)
 
 The demo works in emulators and on actual hardware.
 See releases for a ROM file.
 
-
 # Implementation
 
 There are two background maps:
-  * One using a dungeon tileset and map
-  * Another with a map filled with all-black tiles
+  * One is a dungeon tileset and map
+  * Another is a map filled with all-black tiles
 
-Above and Below the torch area: The background map is set to use the all-black one
+Above and Below the torch area:
+  * The background map is set to all-black one
 
 Left edge curve mask: 
   * The background map swaps (~ 1/4 through the scanline) from all-black to the dungeon map
-  * Some sprites are used to create the arc shape and cover some scrollx % 8 behavior (see below)
+  * Some sprites are used to create the arc shape and cover some background (X scroll % 8) behavior (see below)
 
 Right edge curve mask:
   * The X start location of the Window layer is moved based on the current scanline using a Look-up-Table (LUT)
@@ -43,40 +43,46 @@ Every other frame a larger or smaller circle is displayed
 # Additional Details
 
 The left edge sprite layout:
-![Masking Sprite layout](https://raw.githubusercontent.com/bbbbbr/gb-torch-effect/release/info/torch_effect_sprites_anim.gif)
+(The left most column of masking sprites has since been removed)
+
+![Masking Sprite layout](/info/torch_effect_sprites_anim.gif)
 
 
 And with sprites turned off:
-![Sprites Off](https://raw.githubusercontent.com/bbbbbr/gb-torch-effect/release/info/torch_effect_sprites_off.png)
+
+![Sprites Off](/info/torch_effect_sprites_off.png)
 
 
-Here the sprites are off *AND* the background set to a solid color instead of the dungeon map.
+Why are there extra sprites as a column mask on the Left in addition to the ones used for the arc shape?
 
-The dark part is the Window layer masking. You see two different arc shapes since there is a different one for each alternating frame. The horizontal line at the top of the arcs is ~when the ISR starts.
-![Window Masking](https://raw.githubusercontent.com/bbbbbr/gb-torch-effect/release/info/torch_effect_window_only.png)
-
-
-Why are there extra sprites as a column mask on the Left, in addition to the ones used for the arc shape?
-
-When the background map is swapped mid-scanline, the pixel it takes effect on will vary based on whether the background map X scroll register is an even multiple of 8. This is due to how the Game Boy LCD hardware implements smooth scrolling.
+When the background map is swapped mid-scanline, the pixel that change takes effect on will vary based on the background map X scroll register modulo 8. This is due to how the Game Boy implements X scrolling with the LCD.
 
 With the sprite masking turned off the offset is visible. The extra column of sprites are used to hide this variability.
-![Window Masking](https://raw.githubusercontent.com/bbbbbr/gb-torch-effect/release/info/torch_effect_scx_mod_8.gif)
+
+![Window Masking](/info/torch_effect_scx_mod_8.gif)
+
+
+Here, to show the Window layer masking, the sprites are off *AND* the background set to a solid color instead of the dungeon map.
+
+The dark part is the Window layer. You see two different arc shapes since there is a different one for each alternating frame. The horizontal line at the top of the arcs is ~when the ISR starts for a given arc size.
+
+![Window Masking](/info/torch_effect_window_only.png)
+
 
 
 # Limitations
-* Right now the demo only works when the sprite is centered in the screen. Adding support for moving the torch area vertically would probably not be too hard. Horizontal movement of the torch area may be possible but would require careful timing adjustments for the left edge.
+* Right now the demo only works when the sprite is centered in the screen. Adding support for moving the torch area vertically would probably not be too hard. Horizontal movement of the torch area may be possible but would require careful timing adjustments of the left edge as it moved back and forth.
 
 
 # Credits:
-* The dungeon tileset and sprite are from: https://sondanielson.itch.io/gameboy-simple-rpg-tileset
-* Very readable description of Game Boy render and LCD timing behavior: http://blog.kevtris.org/blogfiles/Nitty%20Gritty%20Gameboy%20VRAM%20Timing.txt
-* Pandocs info on rendering: https://gbdev.io/pandocs/pixel_fifo.html
+* The dungeon tileset and sprite are from - https://sondanielson.itch.io/gameboy-simple-rpg-tileset
+* A very readable description of Game Boy render and LCD timing behavior - http://blog.kevtris.org/blogfiles/Nitty%20Gritty%20Gameboy%20VRAM%20Timing.txt
+* Pandocs info on rendering - https://gbdev.io/pandocs/pixel_fifo.html
 
 
 # Tools
 * Built with GBDK-2020 - https://github.com/gbdk-2020/gbdk-2020
 * Emulicious emulator - https://emulicious.net/
-* BGB emularor - http://bgb.bircd.org/
+* BGB emulator - http://bgb.bircd.org/
 * GIMP TileMap GB - https://github.com/bbbbbr/gimp-tilemap
 * Game Boy Tile Designer / Map Builder - https://github.com/gbdk-2020/GBTD_GBMB
