@@ -1,0 +1,11 @@
+
+*.lst
+*.o
+*.map
+*.cdb
+*.noi
+*.asm
+*.sym
+*.ihx
+*.gb
+*.zip
