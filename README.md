@@ -2,7 +2,6 @@
 Spotlight / Torch effect Demo for the Game Boy
 ==============================================
 
-
 This demo shows small circles of a background map visible among a larger dark area, while still allowing the background map to scroll freely. Temporal blending of alternating frames creates the semi-transparent effect for the medium sized circle.
 
 It looks like a simple, yet it's not a straightforward effect given the limited graphics abilities of the Game Boy. I learned a lot in the process of making this.
@@ -12,7 +11,22 @@ It looks like a simple, yet it's not a straightforward effect given the limited 
 The demo works in emulators and on actual hardware.
 See releases for a ROM file.
 
-# Implementation
+# Alternate Method
+
+[Shintendo](https://twitter.com/shintendoYT) made a demo using a different method which is CGB only using Background / Object priority and Palettes.
+
+Related tweet: https://twitter.com/shintendoYT/status/1620576705139314695
+ 
+ * Entire background palette is black
+ * Sprite has a normal palette with an additional white entry
+ * Priority is set so the sprite is behind the background
+ 
+The player and torch circle will show through wherever color 0 is used in the background. This approach has the benefit of being much easier to actually use though it does require CGB and the background is effectively 2 colors only.
+ 
+![Shintendo's method of a torch effect](/shintendo-method/torch.gif)
+
+
+# My Implementation
 
 There are two background maps:
   * One is a dungeon tileset and map
@@ -86,3 +100,4 @@ The dark part is the Window layer. Two different arc shapes are visible since th
 * BGB emulator - http://bgb.bircd.org/
 * GIMP TileMap GB - https://github.com/bbbbbr/gimp-tilemap
 * Game Boy Tile Designer / Map Builder - https://github.com/gbdk-2020/GBTD_GBMB
+
