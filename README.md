@@ -13,7 +13,7 @@ See releases for a ROM file.
 
 # Alternate Method
 
-[Shintendo](https://twitter.com/shintendoYT) made a demo using a different method which is CGB only using Background / Object priority and Palettes.
+[Shintendo](https://twitter.com/shintendoYT) made a demo using a different method using Background / Object priority and Palettes.
 
 Related tweet: https://twitter.com/shintendoYT/status/1620576705139314695
  
@@ -21,9 +21,10 @@ Related tweet: https://twitter.com/shintendoYT/status/1620576705139314695
  * Sprite has a normal palette with an additional white entry
  * Priority is set so the sprite is behind the background
  
-The player and torch circle will show through wherever color 0 is used in the background. This approach has the benefit of being much easier to actually use though it does require CGB and the background is effectively 2 colors only.
+The player and torch circle will show through wherever color 0 is used in the background. This approach has the benefit of being much easier to actually use though the background is effectively 2 colors only. There is a GBDK version of this in the `shintendo-method` folder.
  
-![Shintendo's method of a torch effect](/shintendo-method/torch.gif)
+Example using GBDK and similar assets to above:
+![Shintendo's method of a torch effect](/shintendo-method/torch_gbdk_shintendo_method.gif)
 
 
 # My Implementation
