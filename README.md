@@ -17,9 +17,9 @@ See releases for a ROM file.
 
 Related tweet: https://twitter.com/shintendoYT/status/1620576705139314695
  
- * Entire background palette is black
- * Sprite has a normal palette with an additional white entry
- * Priority is set so the sprite is behind the background
+ * Entire background palette is black (or a dimmed version of the palette)
+ * The torch circle and player are a large metasprite (composed of multiple sprites)
+ * Priority is set so the sprite is behind the background (transparent parts show as background black)
  
 The player and torch circle will show through wherever color 0 is used in the background. This approach has the benefit of being much easier to actually use though the background is effectively 2 colors only. There is a GBDK version of this in the `shintendo-method` folder.
  
