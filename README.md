@@ -98,7 +98,7 @@ The dark part is the Window layer. Two different arc shapes are visible since th
 # Tools
 * Built with GBDK-2020 - https://github.com/gbdk-2020/gbdk-2020
 * Emulicious emulator - https://emulicious.net/
-* BGB emulator - http://bgb.bircd.org/
+* BGB emulator - https://bgb.bircd.org/
 * GIMP TileMap GB - https://github.com/bbbbbr/gimp-tilemap
 * Game Boy Tile Designer / Map Builder - https://github.com/gbdk-2020/GBTD_GBMB
 
