@@ -11,7 +11,7 @@ It looks like a simple, yet it's not a straightforward effect given the limited 
 The demo works in emulators and on actual hardware.
 See releases for a ROM file.
 
-# Alternate Method
+# Alternate Method: Palette + Sprite Priority
 
 [Shintendo](https://twitter.com/shintendoYT) made a demo using a different method using Background / Object priority and Palettes.
 
@@ -25,6 +25,20 @@ The player and torch circle will show through wherever color 0 is used in the ba
  
 Example using GBDK and similar assets to above:
 ![Shintendo's method of a torch effect](/shintendo-method/torch_gbdk_shintendo_method.gif)
+
+
+# Alternate Method: GBC Palette Attribute Only
+
+[Coffee Power Up!](https://bsky.app/profile/coffeepowerup.bsky.social) shared an approach that uses GBC palettes.
+
+Related tweet: https://bsky.app/profile/coffeepowerup.bsky.social/post/3mi4y4iuoq22n
+
+Specific GBC palettes are set aside as lighter and darker versions, when the player moves through darkened areas the tiles around the player have their GBC attribute changed to use the lighter version of those tiles.
+
+In the simplisitic GBDK example in this repo it's implemented using a attribute tilemap with the palette torch shape which gets redrawn on the background around the player when moving (with smaller draws to reset the departed area).
+
+Example using GBDK and similar assets to above:
+![Coffee Power Up!'s method of a torch effect](/coffee-power-up-method/torch_gbdk_coffeepowerup_method.gif)
 
 
 # My Implementation

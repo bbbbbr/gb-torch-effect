@@ -1,6 +1,10 @@
 
 *.lst
 *.o
+*.rel
+*.d
+*.rst
+*.adb
 *.map
 *.cdb
 *.noi
