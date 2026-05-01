@@ -66,7 +66,8 @@ void redraw_attribute_map_torch_effect(void) {
 
     VBK_REG = VBK_ATTRIBUTES;
     // Draw edges
-    set_bkg_tiles(atr_cent_x - TORCH_WIDTH_ST, atr_cent_y - TORCH_HEIGHT_ST,
+    set_bkg_tiles(TM_CLAMP_W(atr_cent_x - TORCH_WIDTH_ST),
+                  TM_CLAMP_H(atr_cent_y - TORCH_HEIGHT_ST),
                   TORCH_WIDTH, TORCH_HEIGHT, torch_attrib_overlay_map);
     // fill_bkg_rect(atr_cent_x - 1, atr_cent_y - 2, 3, 1, PAL_MED);
     // fill_bkg_rect(atr_cent_x - 1, atr_cent_y + 2, 3, 1, PAL_MED);
