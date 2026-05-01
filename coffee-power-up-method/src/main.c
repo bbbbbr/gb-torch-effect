@@ -122,8 +122,8 @@ void update_attribute_map_torch_effect(uint8_t move_dir) {
                           TM_CLAMP_H(atr_cent_y_last - TORCH_HEIGHT_ST), TORCH_WIDTH, 1, PAL_DRK);
         }
 
-
-        // Draw edge of new position
+        // Draw circle of lighter tile attributes around new position
+        // using a pre-made small tilemap with light palettes in the center
         set_bkg_tiles(TM_CLAMP_W(atr_cent_x - TORCH_WIDTH_ST),
                       TM_CLAMP_H(atr_cent_y - TORCH_HEIGHT_ST),
                       TORCH_WIDTH, TORCH_HEIGHT, torch_attrib_overlay_map);
